@@ -7,10 +7,10 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
+	"github.com/Rak00n/grdp/glog"
 	"github.com/shirou/w32"
-	"github.com/tomatome/grdp/glog"
 
-	"github.com/tomatome/grdp/core"
+	"github.com/Rak00n/grdp/core"
 
 	"github.com/tomatome/win"
 )
@@ -73,68 +73,68 @@ func (c *Control) withOpenClipboard(f func()) {
 		CloseClipboard()
 	}
 }
-func ClipWatcher(c *CliprdrClient) {
-	win.OleInitialize(0)
-	defer win.OleUninitialize()
-	className := syscall.StringToUTF16Ptr("ClipboardHiddenMessageProcessor")
-	windowName := syscall.StringToUTF16Ptr("rdpclip")
-	wndClassEx := w32.WNDCLASSEX{
-		ClassName: className,
-		WndProc: syscall.NewCallback(func(hwnd w32.HWND, msg uint32, wParam, lParam uintptr) uintptr {
-			switch msg {
-			case w32.WM_CLIPBOARDUPDATE:
-				glog.Info("info: WM_CLIPBOARDUPDATE wParam:", wParam)
-				glog.Debug("IsClipboardOwner:", IsClipboardOwner(win.HWND(c.hwnd)))
-				glog.Debug("OleIsCurrentClipboard:", OleIsCurrentClipboard(c.dataObject))
-				if !IsClipboardOwner(win.HWND(c.hwnd)) && int(wParam) != 0 &&
-					!OleIsCurrentClipboard(c.dataObject) {
-					c.sendFormatListPDU()
-				}
-
-			case w32.WM_RENDERALLFORMATS:
-				glog.Info("info: WM_RENDERALLFORMATS")
-				c.withOpenClipboard(func() {
-					EmptyClipboard()
-				})
-
-			case w32.WM_RENDERFORMAT:
-				glog.Info("info: WM_RENDERFORMAT wParam:", wParam)
-				formatId := uint32(wParam)
-				c.sendFormatDataRequest(formatId)
-				b := <-c.reply
-				hmem := HmemAlloc(b)
-				SetClipboardData(formatId, hmem)
-
-			case WM_CLIPRDR_MESSAGE:
-				glog.Info("info: WM_CLIPRDR_MESSAGE wParam:", wParam)
-				if wParam == OLE_SETCLIPBOARD {
-					if !OleIsCurrentClipboard(c.dataObject) {
-						o := CreateDataObject(c)
-						OleSetClipboard(o)
-						c.dataObject = o
-					}
-				}
-			default:
-				return w32.DefWindowProc(hwnd, msg, wParam, lParam)
-			}
-			return 0
-		}),
-		Style: w32.CS_OWNDC,
-	}
-	wndClassEx.Size = uint32(unsafe.Sizeof(wndClassEx))
-	w32.RegisterClassEx(&wndClassEx)
-
-	hwnd := w32.CreateWindowEx(w32.WS_EX_LEFT, className, windowName, 0, 0, 0, 0, 0, w32.HWND_MESSAGE, 0, 0, nil)
-	c.hwnd = uintptr(hwnd)
-	w32.AddClipboardFormatListener(hwnd)
-	defer w32.RemoveClipboardFormatListener(hwnd)
-
-	msg := w32.MSG{}
-	for w32.GetMessage(&msg, 0, 0, 0) > 0 {
-		w32.DispatchMessage(&msg)
-	}
-
-}
+//func ClipWatcher(c *CliprdrClient) {
+//	win.OleInitialize(0)
+//	defer win.OleUninitialize()
+//	className := syscall.StringToUTF16Ptr("ClipboardHiddenMessageProcessor")
+//	windowName := syscall.StringToUTF16Ptr("rdpclip")
+//	wndClassEx := w32.WNDCLASSEX{
+//		ClassName: className,
+//		WndProc: syscall.NewCallback(func(hwnd w32.HWND, msg uint32, wParam, lParam uintptr) uintptr {
+//			switch msg {
+//			case w32.WM_CLIPBOARDUPDATE:
+//				glog.Info("info: WM_CLIPBOARDUPDATE wParam:", wParam)
+//				glog.Debug("IsClipboardOwner:", IsClipboardOwner(win.HWND(c.hwnd)))
+//				glog.Debug("OleIsCurrentClipboard:", OleIsCurrentClipboard(c.dataObject))
+//				if !IsClipboardOwner(win.HWND(c.hwnd)) && int(wParam) != 0 &&
+//					!OleIsCurrentClipboard(c.dataObject) {
+//					c.sendFormatListPDU()
+//				}
+//
+//			case w32.WM_RENDERALLFORMATS:
+//				glog.Info("info: WM_RENDERALLFORMATS")
+//				c.withOpenClipboard(func() {
+//					EmptyClipboard()
+//				})
+//
+//			case w32.WM_RENDERFORMAT:
+//				glog.Info("info: WM_RENDERFORMAT wParam:", wParam)
+//				formatId := uint32(wParam)
+//				c.sendFormatDataRequest(formatId)
+//				b := <-c.reply
+//				hmem := HmemAlloc(b)
+//				SetClipboardData(formatId, hmem)
+//
+//			case WM_CLIPRDR_MESSAGE:
+//				glog.Info("info: WM_CLIPRDR_MESSAGE wParam:", wParam)
+//				if wParam == OLE_SETCLIPBOARD {
+//					if !OleIsCurrentClipboard(c.dataObject) {
+//						o := CreateDataObject(c)
+//						OleSetClipboard(o)
+//						c.dataObject = o
+//					}
+//				}
+//			default:
+//				return w32.DefWindowProc(hwnd, msg, wParam, lParam)
+//			}
+//			return 0
+//		}),
+//		Style: w32.CS_OWNDC,
+//	}
+//	wndClassEx.Size = uint32(unsafe.Sizeof(wndClassEx))
+//	w32.RegisterClassEx(&wndClassEx)
+//
+//	hwnd := w32.CreateWindowEx(w32.WS_EX_LEFT, className, windowName, 0, 0, 0, 0, 0, w32.HWND_MESSAGE, 0, 0, nil)
+//	c.hwnd = uintptr(hwnd)
+//	w32.AddClipboardFormatListener(hwnd)
+//	defer w32.RemoveClipboardFormatListener(hwnd)
+//
+//	msg := w32.MSG{}
+//	for w32.GetMessage(&msg, 0, 0, 0) > 0 {
+//		w32.DispatchMessage(&msg)
+//	}
+//
+//}
 func OpenClipboard(hwnd uintptr) bool {
 	return win.OpenClipboard(win.HWND(hwnd))
 }

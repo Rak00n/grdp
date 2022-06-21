@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/Rak00n/grdp/core"
+	"github.com/Rak00n/grdp/glog"
 	"github.com/lunixbochs/struc"
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/glog"
 )
 
 const (

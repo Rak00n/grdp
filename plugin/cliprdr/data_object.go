@@ -12,8 +12,8 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/glog"
+	"github.com/Rak00n/grdp/core"
+	"github.com/Rak00n/grdp/glog"
 	"github.com/tomatome/win"
 )
 

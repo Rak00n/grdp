@@ -9,9 +9,9 @@ import (
 
 	"github.com/lunixbochs/struc"
 
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/glog"
-	"github.com/tomatome/grdp/plugin"
+	"github.com/Rak00n/grdp/core"
+	"github.com/Rak00n/grdp/glog"
+	"github.com/Rak00n/grdp/plugin"
 )
 
 /**
@@ -319,7 +319,7 @@ func NewCliprdrClient() *CliprdrClient {
 		reply:       make(chan []byte, 100),
 	}
 
-	go ClipWatcher(c)
+	//go ClipWatcher(c)
 
 	return c
 }

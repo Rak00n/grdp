@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tomatome/grdp/core"
+	"github.com/Rak00n/grdp/core"
 )
 
 const (

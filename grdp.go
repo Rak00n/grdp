@@ -10,17 +10,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tomatome/grdp/plugin/cliprdr"
-	"github.com/tomatome/grdp/protocol/rfb"
+	"github.com/Rak00n/grdp/protocol/rfb"
 
-	"github.com/tomatome/grdp/core"
-	"github.com/tomatome/grdp/glog"
-	"github.com/tomatome/grdp/protocol/nla"
-	"github.com/tomatome/grdp/protocol/pdu"
-	"github.com/tomatome/grdp/protocol/sec"
-	"github.com/tomatome/grdp/protocol/t125"
-	"github.com/tomatome/grdp/protocol/tpkt"
-	"github.com/tomatome/grdp/protocol/x224"
+	"github.com/Rak00n/grdp/core"
+	"github.com/Rak00n/grdp/glog"
+	"github.com/Rak00n/grdp/protocol/nla"
+	"github.com/Rak00n/grdp/protocol/pdu"
+	"github.com/Rak00n/grdp/protocol/sec"
+	"github.com/Rak00n/grdp/protocol/t125"
+	"github.com/Rak00n/grdp/protocol/tpkt"
+	"github.com/Rak00n/grdp/protocol/x224"
 )
 
 type Client struct {
@@ -76,11 +75,11 @@ func (g *Client) Login(domain, user, pwd string) error {
 	if err != nil {
 		return fmt.Errorf("[x224 connect err] %v", err)
 	}
-	c := &cliprdr.CliprdrClient{}
-	c.SetSender(g.sec)
-	g.sec.On(c.GetType(), func(s []byte) {
-		c.Handle(s)
-	})
+	//c := &cliprdr.CliprdrClient{}
+	//c.SetSender(g.sec)
+	//g.sec.On(c.GetType(), func(s []byte) {
+	//	c.Handle(s)
+	//})
 	glog.Info("wait connect ok")
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
