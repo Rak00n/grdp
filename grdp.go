@@ -241,6 +241,7 @@ func VerifyProtocol(target string) string {
 
 func main() {
 	client := NewClient("192.168.56.105:3389", glog.DEBUG)
+	//err := client.LoginForSSL("","user", "1234")
 	err := client.LoginForRDP("","user", "1234")
 	if err != nil {
 	fmt.Println("login failed,", err)
