@@ -8,8 +8,8 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/Rak00n/grdp/core"
-	"github.com/Rak00n/grdp/glog"
+	"Yasso/pkg/grdp/core"
+	"Yasso/pkg/grdp/glog"
 	"github.com/lunixbochs/struc"
 )
 
@@ -395,7 +395,7 @@ func (n *NTLMv2) GetAuthenticateMessage(s []byte) (*AuthenticateMessage, *NTLMv2
 	} else {
 		computeMIC = true
 	}
-	glog.Infof("serverName=%+v", core.UnicodeDecode(serverName))
+	glog.Infof("serverName=%+v", string(serverName))
 	serverChallenge := challengeMsg.ServerChallenge[:]
 	clientChallenge := core.Random(8)
 	ntChallengeResponse, lmChallengeResponse, SessionBaseKey := n.ComputeResponseV2(

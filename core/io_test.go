@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/Rak00n/grdp/core"
+	"Yasso/pkg/grdp/core"
 )
 
 func TestWriteUInt16LE(t *testing.T) {

@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Rak00n/grdp/glog"
+	"Yasso/pkg/grdp/glog"
 
-	"github.com/Rak00n/grdp/core"
-	"github.com/Rak00n/grdp/emission"
-	"github.com/Rak00n/grdp/protocol/tpkt"
+	"Yasso/pkg/grdp/core"
+	"Yasso/pkg/grdp/emission"
+	"Yasso/pkg/grdp/protocol/tpkt"
 	"github.com/lunixbochs/struc"
 )
 
@@ -105,7 +105,6 @@ func (x *ClientConnectionRequestPDU) Serialize() []byte {
 		core.WriteUInt16LE(0x0A0D, buff)
 	}
 	struc.Pack(buff, x.ProtocolNeg)
-
 	return buff.Bytes()
 }
 
@@ -219,6 +218,7 @@ func (x *X224) recvConnectionConfirm(s []byte) {
 		//only use Standard RDP Security mechanisms
 		if message.ProtocolNeg.Result == 2 {
 			glog.Info("Only use Standard RDP Security mechanisms, Reconnect with Standard RDP")
+			x.Emit("error", errors.New("PROTOCOL_RDP"))
 		}
 		x.Close()
 		return

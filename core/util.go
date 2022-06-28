@@ -1,7 +1,6 @@
 package core
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/binary"
 	"unicode/utf16"
@@ -24,7 +23,7 @@ func Random(n int) []byte {
 	return bytes
 }
 
-func UTF16ToLittleEndianBytes(u []uint16) []byte {
+func convertUTF16ToLittleEndianBytes(u []uint16) []byte {
 	b := make([]byte, 2*len(u))
 	for index, value := range u {
 		binary.LittleEndian.PutUint16(b[index*2:], value)
@@ -32,36 +31,22 @@ func UTF16ToLittleEndianBytes(u []uint16) []byte {
 	return b
 }
 
-func LittleEndianBytesToUTF16(u []byte) []uint16 {
-	b := make([]uint16, 0, len(u)/2)
-	n := make([]byte, 2)
-	for i, v := range u {
-		if i%2 == 0 {
-			n[0] = v
-		} else {
-			n[1] = v
-			b = append(b, binary.LittleEndian.Uint16(n))
-		}
-	}
-	return b
-}
-
 // s.encode('utf-16le')
 func UnicodeEncode(p string) []byte {
-	return UTF16ToLittleEndianBytes(utf16.Encode([]rune(p)))
+	return convertUTF16ToLittleEndianBytes(utf16.Encode([]rune(p)))
 }
 
 func UnicodeDecode(p []byte) string {
-	r := bytes.NewReader(p)
-	n := make([]uint16, 0, 100)
-	for r.Len() > 0 {
-		a, _ := ReadUint16LE(r)
-		n = append(n, a)
+	b := make([]byte, 2)
+	n := make([]uint16, 0, len(p)/2)
+	for i, v := range p {
+		if i%2 == 0 {
+			b[0] = v
+		} else {
+			b[1] = v
+			a := binary.LittleEndian.Uint16(b)
+			n = append(n, a)
+		}
 	}
-	//n := LittleEndianBytesToUTF16(p)
 	return string(utf16.Decode(n))
-}
-
-func BytesToUint64(b []byte) uint64 {
-	return binary.LittleEndian.Uint64(b)
 }

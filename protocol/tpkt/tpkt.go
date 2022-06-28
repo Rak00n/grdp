@@ -5,10 +5,10 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/Rak00n/grdp/core"
-	"github.com/Rak00n/grdp/emission"
-	"github.com/Rak00n/grdp/glog"
-	"github.com/Rak00n/grdp/protocol/nla"
+	"Yasso/pkg/grdp/core"
+	"Yasso/pkg/grdp/emission"
+	"Yasso/pkg/grdp/glog"
+	"Yasso/pkg/grdp/protocol/nla"
 )
 
 // take idea from https://github.com/Madnikulin50/gordp

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Rak00n/grdp/core"
+	"Yasso/pkg/grdp/core"
 )
 
 const (

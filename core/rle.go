@@ -1,7 +1,7 @@
 package core
 
 import (
-	"fmt"
+	"Yasso/pkg/grdp/glog"
 	"unsafe"
 )
 
@@ -417,7 +417,7 @@ func decompress2(output *[]uint8, width, height int, input []uint8, size int) bo
 				}, &count, &x, width)
 				break
 			default:
-				fmt.Printf("bitmap opcode 0x%x\n", opcode)
+				glog.Infof("bitmap opcode 0x%x\n", opcode)
 				return false
 			}
 		}
@@ -847,7 +847,7 @@ func Decompress(input []uint8, width, height int, Bpp int) []uint8 {
 	case 4:
 		decompress4(&output, width, height, input, size)
 	default:
-		fmt.Printf("Bpp %d\n", Bpp)
+		glog.Infof("Bpp %d\n", Bpp)
 	}
 
 	return output

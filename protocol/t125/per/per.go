@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/Rak00n/grdp/glog"
+	"Yasso/pkg/grdp/glog"
 
-	"github.com/Rak00n/grdp/core"
+	"Yasso/pkg/grdp/core"
 )
 
 func ReadEnumerates(r io.Reader) (uint8, error) {

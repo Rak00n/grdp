@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Rak00n/grdp/core"
-	"github.com/Rak00n/grdp/glog"
+	"Yasso/pkg/grdp/core"
+	"Yasso/pkg/grdp/glog"
 	"github.com/lunixbochs/struc"
 )
 
@@ -488,7 +488,7 @@ func (s *SaveSessionInfo) logonInfoV2(r io.Reader) (err error) {
 	domain := core.UnicodeDecode(b)
 	b, _ = core.ReadBytes(int(cbUserName), r)
 	userName := core.UnicodeDecode(b)
-	glog.Infof("SessionId:[%d] UserName:[ %s] Domain:[ %s]", s.LogonId, userName, domain)
+	glog.Infof("SessionId:[%d] UserName:[%s] Domain:[%s]", s.LogonId, userName, domain)
 
 	return err
 }
@@ -535,8 +535,8 @@ func (s *SaveSessionInfo) Unpack(r io.Reader) (err error) {
 	case INFOTYPE_LOGON_EXTENDED_INFO:
 		err = s.logonInfoExtended(r)
 	default:
-		glog.Errorf("Unhandled saveSessionInfo type 0x%x", s.InfoType)
-		return fmt.Errorf("Unhandled saveSessionInfo type 0x%x", s.InfoType)
+		glog.Error("Unhandled saveSessionInfo type 0x%", s.InfoType)
+		return fmt.Errorf("Unhandled saveSessionInfo type 0x%", s.InfoType)
 	}
 
 	return err
@@ -674,7 +674,6 @@ func readFastPathUpdatePDU(r io.Reader) (*FastPathUpdatePDU, error) {
 	}
 
 	var d UpdateData
-	glog.Debugf("Fast Path PDU type 0x%x", f.UpdateHeader)
 	switch f.UpdateHeader & 0xf {
 	case FASTPATH_UPDATETYPE_BITMAP:
 		d = &FastPathBitmapUpdateDataPDU{}

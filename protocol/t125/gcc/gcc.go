@@ -6,12 +6,10 @@ import (
 	"io"
 	"os"
 
-	"github.com/Rak00n/grdp/plugin"
+	"Yasso/pkg/grdp/glog"
 
-	"github.com/Rak00n/grdp/glog"
-
-	"github.com/Rak00n/grdp/core"
-	"github.com/Rak00n/grdp/protocol/t125/per"
+	"Yasso/pkg/grdp/core"
+	"Yasso/pkg/grdp/protocol/t125/per"
 	"github.com/lunixbochs/struc"
 )
 
@@ -221,8 +219,8 @@ const (
 )
 
 type ChannelDef struct {
-	Name    string `struc:"little"`
-	Options uint32 `struc:"little"`
+	Name    [8]byte
+	Options uint32
 }
 
 type ClientCoreData struct {
@@ -262,7 +260,7 @@ func NewClientCoreData() *ClientCoreData {
 		RNS_UD_CS_SUPPORT_ERRINFO_PDU, [64]byte{}, 0, 0, 0}
 }
 
-func (data *ClientCoreData) Pack() []byte {
+func (data *ClientCoreData) Block() []byte {
 	buff := &bytes.Buffer{}
 	core.WriteUInt16LE(CS_CORE, buff) // 01C0
 	core.WriteUInt16LE(0xd8, buff)    // d800
@@ -276,43 +274,14 @@ type ClientNetworkData struct {
 }
 
 func NewClientNetworkData() *ClientNetworkData {
-	n := &ClientNetworkData{}
-	n.ChannelCount = 3
-	n.ChannelDefArray = make([]ChannelDef, 0, n.ChannelCount)
-
-	var d1 ChannelDef
-	d1.Name = plugin.RDPDR_SVC_CHANNEL_NAME
-	d1.Options = uint32(CHANNEL_OPTION_INITIALIZED | CHANNEL_OPTION_ENCRYPT_RDP |
-		CHANNEL_OPTION_COMPRESS_RDP)
-	n.ChannelDefArray = append(n.ChannelDefArray, d1)
-
-	var d2 ChannelDef
-	d2.Name = plugin.RDPSND_SVC_CHANNEL_NAME
-	d2.Options = uint32(CHANNEL_OPTION_INITIALIZED | CHANNEL_OPTION_ENCRYPT_RDP |
-		CHANNEL_OPTION_COMPRESS_RDP | CHANNEL_OPTION_SHOW_PROTOCOL)
-	n.ChannelDefArray = append(n.ChannelDefArray, d2)
-	var d ChannelDef
-	d.Name = plugin.CLIPRDR_SVC_CHANNEL_NAME
-	d.Options = uint32(CHANNEL_OPTION_INITIALIZED | CHANNEL_OPTION_ENCRYPT_RDP |
-		CHANNEL_OPTION_COMPRESS_RDP | CHANNEL_OPTION_SHOW_PROTOCOL)
-	n.ChannelDefArray = append(n.ChannelDefArray, d)
-
-	return n
+	return &ClientNetworkData{}
 }
 
-func (d *ClientNetworkData) Pack() []byte {
+func (d *ClientNetworkData) Block() []byte {
 	buff := &bytes.Buffer{}
 	core.WriteUInt16LE(CS_NET, buff) // type
-	length := uint16(d.ChannelCount*12 + 8)
-	core.WriteUInt16LE(length, buff) // len 8
-	core.WriteUInt32LE(d.ChannelCount, buff)
-	for i := 0; i < int(d.ChannelCount); i++ {
-		v := d.ChannelDefArray[i]
-		name := make([]byte, 8)
-		copy(name, []byte(v.Name))
-		core.WriteBytes(name[:], buff)
-		core.WriteUInt32LE(v.Options, buff)
-	}
+	core.WriteUInt16LE(0x08, buff)   // len 8
+	buff.Write([]byte{0, 0, 0, 0})   // data
 	return buff.Bytes()
 }
 
@@ -327,7 +296,7 @@ func NewClientSecurityData() *ClientSecurityData {
 		00}
 }
 
-func (d *ClientSecurityData) Pack() []byte {
+func (d *ClientSecurityData) Block() []byte {
 	buff := &bytes.Buffer{}
 	core.WriteUInt16LE(CS_SECURITY, buff) // type
 	core.WriteUInt16LE(0x0c, buff)        // len 12
@@ -465,33 +434,6 @@ type ServerCertificate struct {
 	DwVersion uint32
 	CertData  CertData
 }
-
-func (sc *ServerCertificate) Unpack(r io.Reader) error {
-	sc.DwVersion, _ = core.ReadUInt32LE(r)
-	var cd CertData
-	switch CertificateType(sc.DwVersion & 0x7fffffff) {
-	case CERT_CHAIN_VERSION_1:
-		glog.Debug("ProprietaryServerCertificate")
-		cd = &ProprietaryServerCertificate{}
-	case CERT_CHAIN_VERSION_2:
-		glog.Debug("X509CertificateChain")
-		cd = &X509CertificateChain{}
-	default:
-		glog.Error("Unsupported version:", sc.DwVersion&0x7fffffff)
-		return errors.New("Unsupported version")
-	}
-	if cd != nil {
-		err := cd.Unpack(r)
-		if err != nil {
-			glog.Error("Unpack:", err)
-			return err
-		}
-	}
-	sc.CertData = cd
-
-	return nil
-}
-
 type ServerSecurityData struct {
 	EncryptionMethod  uint32 `struc:"little"`
 	EncryptionLevel   uint32 `struc:"little"`
@@ -518,10 +460,29 @@ func (s *ServerSecurityData) Unpack(r io.Reader) error {
 		var sc ServerCertificate
 		data, _ := core.ReadBytes(int(s.ServerCertLen), r)
 		rd := bytes.NewReader(data)
-		err := sc.Unpack(rd)
-		if err != nil {
-			return err
+		sc.DwVersion, _ = core.ReadUInt32LE(rd)
+		var cd CertData
+		switch CertificateType(sc.DwVersion & 0x7fffffff) {
+		case CERT_CHAIN_VERSION_1:
+			glog.Debug("ProprietaryServerCertificate")
+			cd = &ProprietaryServerCertificate{}
+		case CERT_CHAIN_VERSION_2:
+			glog.Debug("X509CertificateChain")
+			cd = &X509CertificateChain{}
+		default:
+			glog.Error("Unsupported version:", sc.DwVersion&0x7fffffff)
+			return errors.New("Unsupported version")
 		}
+		if cd != nil {
+			//err := struc.Unpack(rd, cd)
+			err := cd.Unpack(rd)
+			if err != nil {
+				glog.Error("Unpack:", err)
+				return err
+			}
+			glog.Infof("d:%+v", cd)
+		}
+		sc.CertData = cd
 		s.ServerCertificate = sc
 	}
 
@@ -551,7 +512,6 @@ type ScData interface {
 
 func ReadConferenceCreateResponse(data []byte) []interface{} {
 	ret := make([]interface{}, 0, 3)
-
 	r := bytes.NewReader(data)
 	per.ReadChoice(r)
 	if !per.ReadObjectIdentifier(r, t124_02_98_oid) {
@@ -592,15 +552,15 @@ func ReadConferenceCreateResponse(data []byte) []interface{} {
 			glog.Error("Unknown type", t)
 			continue
 		}
-		if d != nil {
-			r := bytes.NewReader(dataBytes)
-			err := d.Unpack(r)
-			if err != nil {
-				glog.Error("Unpack:", err)
+		r := bytes.NewReader(dataBytes)
+		err := d.Unpack(r)
+		if err != nil {
+			glog.Error("Unpack:", err)
+			if err.Error() != "EOF" {
 				return ret
 			}
-			ret = append(ret, d)
 		}
+		ret = append(ret, d)
 		glog.Debugf("d:%+v", d)
 	}
 

@@ -3,11 +3,13 @@ package pdu
 import (
 	"bytes"
 	"encoding/hex"
+	"errors"
+	"fmt"
 
-	"github.com/Rak00n/grdp/core"
-	"github.com/Rak00n/grdp/emission"
-	"github.com/Rak00n/grdp/glog"
-	"github.com/Rak00n/grdp/protocol/t125/gcc"
+	"Yasso/pkg/grdp/core"
+	"Yasso/pkg/grdp/emission"
+	"Yasso/pkg/grdp/glog"
+	"Yasso/pkg/grdp/protocol/t125/gcc"
 )
 
 type PDULayer struct {
@@ -117,6 +119,8 @@ func (p *PDULayer) SetFastPathSender(f core.FastPathSender) {
 type Client struct {
 	*PDULayer
 	clientCoreData *gcc.ClientCoreData
+	remoteAppMode  bool
+	enableCliprdr  bool
 }
 
 func NewClient(t core.Transport) *Client {
@@ -136,6 +140,14 @@ func (c *Client) connect(data *gcc.ClientCoreData, userId uint16, channelId uint
 }
 
 func (c *Client) recvDemandActivePDU(s []byte) {
+	defer func() {
+		if e := recover(); e != nil {
+			err := errors.New(fmt.Sprint("recv demand active pdu error: ", e))
+			glog.Debug(err, e)
+			return
+		}
+	}()
+
 	glog.Debug("PDU recvDemandActivePDU", hex.EncodeToString(s))
 	r := bytes.NewReader(s)
 	pdu, err := readPDU(r)
@@ -193,7 +205,10 @@ func (c *Client) sendConfirmActivePDU() {
 		glog.Debugf("clientCapabilities: 0x%04x", v.Type())
 		pdu.CapabilitySets = append(pdu.CapabilitySets, v)
 	}
-
+	if c.remoteAppMode {
+		pdu.CapabilitySets = append(pdu.CapabilitySets, c.serverCapabilities[CAPSTYPE_RAIL])
+		pdu.CapabilitySets = append(pdu.CapabilitySets, c.serverCapabilities[CAPSTYPE_WINDOW])
+	}
 	pdu.LengthSourceDescriptor = c.demandActivePDU.LengthSourceDescriptor
 	pdu.SourceDescriptor = c.demandActivePDU.SourceDescriptor
 	pdu.LengthCombinedCapabilities = c.demandActivePDU.LengthCombinedCapabilities
@@ -315,7 +330,7 @@ func (c *Client) recvPDU(s []byte) {
 			return
 		}
 		if p.ShareCtrlHeader.PDUType == PDUTYPE_DEACTIVATEALLPDU {
-			c.transport.Once("data", c.recvDemandActivePDU)
+			c.transport.On("data", c.recvDemandActivePDU)
 		}
 	}
 }

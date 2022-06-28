@@ -19,8 +19,7 @@ var (
 type LEVEL int
 
 const (
-	TRACE LEVEL = iota
-	DEBUG
+	DEBUG LEVEL = iota
 	INFO
 	WARN
 	ERROR
@@ -41,24 +40,7 @@ func checkLogger() {
 		panic("logger not inited")
 	}
 }
-func Trace(v ...interface{}) {
-	checkLogger()
-	if level <= TRACE {
-		mu.Lock()
-		defer mu.Unlock()
-		logger.SetPrefix("[TRACE]")
-		logger.Output(2, fmt.Sprintln(v...))
-	}
-}
-func Tracef(f string, v ...interface{}) {
-	checkLogger()
-	if level <= TRACE {
-		mu.Lock()
-		defer mu.Unlock()
-		logger.SetPrefix("[TRACE]")
-		logger.Output(2, fmt.Sprintln(fmt.Sprintf(f, v...)))
-	}
-}
+
 func Debug(v ...interface{}) {
 	checkLogger()
 	if level <= DEBUG {
@@ -104,15 +86,7 @@ func Warn(v ...interface{}) {
 		logger.Output(2, fmt.Sprintln(v...))
 	}
 }
-func Warnf(f string, v ...interface{}) {
-	checkLogger()
-	if level <= WARN {
-		mu.Lock()
-		defer mu.Unlock()
-		logger.SetPrefix("[WARN]")
-		logger.Output(2, fmt.Sprintln(fmt.Sprintf(f, v...)))
-	}
-}
+
 func Error(v ...interface{}) {
 	checkLogger()
 	if level <= ERROR {
