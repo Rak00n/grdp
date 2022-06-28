@@ -1,6 +1,6 @@
 package core
 
-import "Yasso/pkg/grdp/emission"
+import "../emission"
 
 type Transport interface {
 	Read(b []byte) (n int, err error)

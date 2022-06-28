@@ -6,10 +6,10 @@ import (
 	"errors"
 	"fmt"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/emission"
-	"Yasso/pkg/grdp/glog"
-	"Yasso/pkg/grdp/protocol/t125/gcc"
+	"../../core"
+	"../../emission"
+	"../../glog"
+	"../../protocol/t125/gcc"
 )
 
 type PDULayer struct {

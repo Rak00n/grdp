@@ -1,8 +1,8 @@
-package grdp
+package main
 
 import (
-	"Yasso/pkg/grdp/glog"
 	"fmt"
+	"github.com/Rak00n/grdp/glog"
 	"testing"
 )
 

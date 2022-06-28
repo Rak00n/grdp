@@ -8,8 +8,8 @@ import (
 	"encoding/hex"
 	"time"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/glog"
+	"../../core"
+	"../../glog"
 	"github.com/lunixbochs/struc"
 )
 

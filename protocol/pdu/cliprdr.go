@@ -3,8 +3,8 @@ package pdu
 import (
 	"bytes"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/glog"
+	"../../core"
+	"../../glog"
 )
 
 /**

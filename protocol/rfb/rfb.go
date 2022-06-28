@@ -12,9 +12,9 @@ import (
 
 	"github.com/lunixbochs/struc"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/emission"
-	"Yasso/pkg/grdp/glog"
+	"../../core"
+	"../../emission"
+	"../../glog"
 )
 
 // ProtocolVersion

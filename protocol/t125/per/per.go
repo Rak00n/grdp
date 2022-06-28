@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"io"
 
-	"Yasso/pkg/grdp/glog"
+	"../../../glog"
 
-	"Yasso/pkg/grdp/core"
+	"../../../core"
 )
 
 func ReadEnumerates(r io.Reader) (uint8, error) {

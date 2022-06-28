@@ -8,12 +8,12 @@ import (
 	"io"
 	"reflect"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/emission"
-	"Yasso/pkg/grdp/glog"
-	"Yasso/pkg/grdp/protocol/t125/ber"
-	"Yasso/pkg/grdp/protocol/t125/gcc"
-	"Yasso/pkg/grdp/protocol/t125/per"
+	"../../core"
+	"../../emission"
+	"../../glog"
+	"../../protocol/t125/ber"
+	"../../protocol/t125/gcc"
+	"../../protocol/t125/per"
 )
 
 // take idea from https://github.com/Madnikulin50/gordp

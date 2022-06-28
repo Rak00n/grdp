@@ -6,10 +6,10 @@ import (
 	"io"
 	"os"
 
-	"Yasso/pkg/grdp/glog"
+	"../../../glog"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/protocol/t125/per"
+	"../../../core"
+	"../../../protocol/t125/per"
 	"github.com/lunixbochs/struc"
 )
 

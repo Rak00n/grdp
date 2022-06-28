@@ -1,6 +1,15 @@
-package grdp
+package main
 
 import (
+	"./core"
+	"./glog"
+	"./protocol/nla"
+	"./protocol/pdu"
+	"./protocol/rfb"
+	"./protocol/sec"
+	"./protocol/t125"
+	"./protocol/tpkt"
+	"./protocol/x224"
 	"errors"
 	"fmt"
 	"log"
@@ -8,16 +17,6 @@ import (
 	"os"
 	"sync"
 	"time"
-
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/glog"
-	"Yasso/pkg/grdp/protocol/nla"
-	"Yasso/pkg/grdp/protocol/pdu"
-	"Yasso/pkg/grdp/protocol/rfb"
-	"Yasso/pkg/grdp/protocol/sec"
-	"Yasso/pkg/grdp/protocol/t125"
-	"Yasso/pkg/grdp/protocol/tpkt"
-	"Yasso/pkg/grdp/protocol/x224"
 )
 
 const (
@@ -238,4 +237,14 @@ func VerifyProtocol(target string) string {
 		return PROTOCOL_SSL
 	}
 	return PROTOCOL_RDP
+}
+
+func main() {
+	client := NewClient("192.168.56.105:3389", glog.DEBUG)
+	err := client.LoginForRDP("","user", "1234")
+	if err != nil {
+	fmt.Println("login failed,", err)
+	} else {
+	fmt.Println("login success")
+	}
 }

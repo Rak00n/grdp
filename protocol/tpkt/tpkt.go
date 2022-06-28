@@ -5,10 +5,10 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/emission"
-	"Yasso/pkg/grdp/glog"
-	"Yasso/pkg/grdp/protocol/nla"
+	"../../core"
+	"../../emission"
+	"../../glog"
+	"../../protocol/nla"
 )
 
 // take idea from https://github.com/Madnikulin50/gordp

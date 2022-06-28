@@ -6,7 +6,7 @@ import (
 	"crypto/rc4"
 	"strings"
 
-	"Yasso/pkg/grdp/core"
+	"../../core"
 	"golang.org/x/crypto/md4"
 )
 

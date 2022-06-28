@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"Yasso/pkg/grdp/core"
+	"../../../core"
 )
 
 const (

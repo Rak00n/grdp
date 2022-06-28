@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"io"
 
-	"Yasso/pkg/grdp/glog"
+	"../../glog"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/protocol/t125/gcc"
+	"../../core"
+	"../../protocol/t125/gcc"
 	"github.com/lunixbochs/struc"
 )
 

@@ -1,7 +1,7 @@
 package core
 
 import (
-	"Yasso/pkg/grdp/glog"
+	"../glog"
 	"unsafe"
 )
 

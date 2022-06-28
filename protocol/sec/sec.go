@@ -14,14 +14,14 @@ import (
 
 	"github.com/lunixbochs/struc"
 
-	"Yasso/pkg/grdp/protocol/nla"
+	"../../protocol/nla"
 
-	"Yasso/pkg/grdp/core"
-	"Yasso/pkg/grdp/emission"
-	"Yasso/pkg/grdp/glog"
-	"Yasso/pkg/grdp/protocol/lic"
-	"Yasso/pkg/grdp/protocol/t125"
-	"Yasso/pkg/grdp/protocol/t125/gcc"
+	"../../core"
+	"../../emission"
+	"../../glog"
+	"../../protocol/lic"
+	"../../protocol/t125"
+	"../../protocol/t125/gcc"
 )
 
 /**

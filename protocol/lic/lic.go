@@ -3,7 +3,7 @@ package lic
 import (
 	"io"
 
-	"Yasso/pkg/grdp/core"
+	"../../core"
 )
 
 const (

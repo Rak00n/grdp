@@ -3,7 +3,7 @@ package nla
 import (
 	"encoding/asn1"
 
-	"Yasso/pkg/grdp/glog"
+	"../../glog"
 )
 
 type NegoToken struct {
