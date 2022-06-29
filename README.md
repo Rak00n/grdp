@@ -8,4 +8,5 @@ Forked from icodeface/grdp
 ## Example
 
 .\main.exe -target 192.168.56.105:3389 -username User -password "123" -domain "."
+
 login success
