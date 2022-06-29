@@ -11,6 +11,7 @@ import (
 	"./protocol/tpkt"
 	"./protocol/x224"
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -239,13 +240,31 @@ func VerifyProtocol(target string) string {
 	return PROTOCOL_RDP
 }
 
+var target string
+var domain string
+var username string
+var password string
+
+func init() {
+	flag.StringVar(&target, "target", "", "Target host and port")
+	flag.StringVar(&domain, "domain", "", "User Domain")
+	flag.StringVar(&username, "username", "", "Username to try")
+	flag.StringVar(&password, "password", "", "Password to try")
+	flag.Parse()
+}
+
 func main() {
-	client := NewClient("192.168.56.105:3389", glog.DEBUG)
-	//err := client.LoginForSSL("","user", "1234")
-	err := client.LoginForRDP("","user", "1234")
+	client := NewClient(target, glog.NONE)
+	var err error
+	//if useNLA {
+	//	err = client.LoginForSSL(domain,username, password)
+	//} else {
+	//	err = client.LoginForRDP(domain,username, password)
+	//}
+	err = client.LoginForSSL(domain,username, password)
 	if err != nil {
-	fmt.Println("login failed,", err)
+		fmt.Println("login failed,", err)
 	} else {
-	fmt.Println("login success")
+		fmt.Println("login success")
 	}
 }
